@@ -87,7 +87,6 @@ function timeWord(timeString){
     }
     
     timeReturn = hours +" " + minuteRetrun + " " + timeOfDay;
-    console.log(timeReturn);
     return timeReturn;
 }
 

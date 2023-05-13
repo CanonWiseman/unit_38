@@ -79,7 +79,7 @@ class User {
    *
    * */
 
-  static async getAll(username, password) {
+  static async getAll() {
     const result = await db.query(
       `SELECT username,
                 first_name,
@@ -134,7 +134,7 @@ class User {
       'username',
       username
     );
-
+    
     const result = await db.query(query, values);
     const user = result.rows[0];
 

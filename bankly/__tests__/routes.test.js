@@ -103,7 +103,16 @@ describe("GET /users", function() {
       .get("/users")
       .send({ _token: tokens.u1 });
     expect(response.statusCode).toBe(200);
-    expect(response.body.users.length).toBe(3);
+    expect(response.body.length).toBe(3);
+
+    //Testing Bug #3 to check only basic information is returned 
+    expect(response.body).toEqual(
+      [
+        { username: 'u1', first_name: 'fn1', last_name: 'ln1' },
+        { username: 'u2', first_name: 'fn2', last_name: 'ln2' },
+        { username: 'u3', first_name: 'fn3', last_name: 'ln3' }
+      ]
+    )
   });
 });
 
@@ -141,10 +150,28 @@ describe("PATCH /users/[username]", function() {
     expect(response.statusCode).toBe(401);
   });
 
+  //tests BUG #5 only phone, email, first_name, last_name should be able to be changed
   test("should patch data if admin", async function() {
     const response = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u3, first_name: "new-fn1" }); // u3 is admin
+      .send({ _token: tokens.u3, first_name: "new-fn1", last_name: "ln2", phone: "1"}); // u3 is admin
+    expect(response.statusCode).toBe(200);
+    expect(response.body.user).toEqual({
+      username: "u1",
+      first_name: "new-fn1",
+      last_name: "ln2",
+      email: "email1",
+      phone: "1",
+      admin: false,
+      password: expect.any(String)
+    });
+  });
+
+   //tests BUG #5 should not be able to change username
+   test("should patch data if admin", async function() {
+    const response = await request(app)
+      .patch("/users/u1")
+      .send({ _token: tokens.u3, first_name: "new-fn1", username: "u4"}); // u3 is admin
     expect(response.statusCode).toBe(200);
     expect(response.body.user).toEqual({
       username: "u1",
@@ -192,6 +219,15 @@ describe("DELETE /users/[username]", function() {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "deleted" });
   });
+
+  // test("should return 404 if user not found", async function() {
+  //   const response = await request(app)
+  //     .delete("/users/u4")
+  //     .send({ _token: tokens.u3 }); // u3 is admin
+  //   expect(response.statusCode).toBe(404);
+    
+  // });
+
 });
 
 afterEach(async function() {

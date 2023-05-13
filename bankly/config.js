@@ -1,5 +1,5 @@
 /** Shared config for application; can be req'd many places. */
-
+const key = require("./secret");
 require('dotenv');
 
 const SECRET_KEY = process.env.SECRET_KEY || 'development-secret-key';
@@ -10,8 +10,8 @@ const BCRYPT_WORK_FACTOR = 10;
 
 const DB_URI =
   process.env.NODE_ENV === 'test'
-    ? 'postgresql:///bankly_test'
-    : 'postgresql:///bankly';
+    ? `postgres://postgres:${key}@localhost:5432/bankly_test`
+    : `postgres://postgres:${key}@localhost:5432/bankly`;
 
 module.exports = {
   BCRYPT_WORK_FACTOR,

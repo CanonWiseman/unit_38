@@ -18,7 +18,15 @@ const { authUser, requireLogin, requireAdmin } = require('../middleware/auth');
 router.get('/', authUser, requireLogin, async function(req, res, next) {
   try {
     let users = await User.getAll();
-    return res.json({ users });
+
+    //Fixes Bug #3
+    return res.json(
+      users.map(u => ({
+        username: u.username,
+        first_name: u.first_name,
+        last_name: u.last_name
+      }))
+    );
   } catch (err) {
     return next(err);
   }
@@ -35,11 +43,7 @@ router.get('/', authUser, requireLogin, async function(req, res, next) {
  *
  */
 
-router.get('/:username', authUser, requireLogin, async function(
-  req,
-  res,
-  next
-) {
+router.get('/:username', authUser, requireLogin, async function(req, res, next) {
   try {
     let user = await User.get(req.params.username);
     return res.json({ user });
@@ -63,19 +67,16 @@ router.get('/:username', authUser, requireLogin, async function(
  *
  */
 
-router.patch('/:username', authUser, requireLogin, requireAdmin, async function(
-  req,
-  res,
-  next
-) {
+router.patch('/:username', authUser, requireLogin, requireAdmin, async function( req, res, next) {
   try {
-    if (!req.curr_admin && req.curr_username !== req.params.username) {
-      throw new ExpressError('Only  that user or admin can edit a user.', 401);
+    
+    // get first_name, last_name, phone, email from req.body for updating
+    const fields = {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      phone: req.body.phone,
+      email: req.body.email
     }
-
-    // get fields to change; remove token so we don't try to change it
-    let fields = { ...req.body };
-    delete fields._token;
 
     let user = await User.update(req.params.username, fields);
     return res.json({ user });
@@ -94,11 +95,7 @@ router.patch('/:username', authUser, requireLogin, requireAdmin, async function(
  * If user cannot be found, return a 404 err.
  */
 
-router.delete('/:username', authUser, requireAdmin, async function(
-  req,
-  res,
-  next
-) {
+router.delete('/:username', authUser, requireAdmin, async function(req, res, next) {
   try {
     User.delete(req.params.username);
     return res.json({ message: 'deleted' });
