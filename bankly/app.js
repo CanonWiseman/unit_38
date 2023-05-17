@@ -25,11 +25,14 @@ app.use(function(req, res, next) {
 /** general error handler */
 
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-
+  if (process.env.NODE_ENV !== "test") console.error(err.stack);
+  
+  const status = err.status || 500;
+  const message = err.message;
+  
   return res.json({
-    status: err.status,
-    message: err.message
+    status: status,
+    message: message
   });
 });
 
