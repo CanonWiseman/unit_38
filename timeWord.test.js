@@ -44,4 +44,9 @@ describe('#timeword', () => {
     const res = timeWord("21-40");
     expect(res).toEqual("nine forty pm");
   });
+
+  test('twelve twelve works', () => {
+    const res = timeWord("00-12");
+    expect(res).toEqual("twelve twelve am");
+  });
 });

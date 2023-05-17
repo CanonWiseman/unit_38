@@ -222,10 +222,9 @@ describe("DELETE /users/[username]", function() {
 
   // test("should return 404 if user not found", async function() {
   //   const response = await request(app)
-  //     .delete("/users/u4")
+  //     .delete("/users/no")
   //     .send({ _token: tokens.u3 }); // u3 is admin
   //   expect(response.statusCode).toBe(404);
-    
   // });
 
 });

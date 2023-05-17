@@ -51,7 +51,7 @@ function timeWord(timeString){
         "50": "fifty"
     }
 
-    if(hours == "00"){
+    if(hours == "00" && minutes == "00"){
         timeReturn = "midnight";
         return timeReturn;
     }
@@ -86,7 +86,7 @@ function timeWord(timeString){
         minuteRetrun = minutesWords[minutes];
     }
     
-    timeReturn = hours +" " + minuteRetrun + " " + timeOfDay;
+    timeReturn = hours + " " + minuteRetrun + " " + timeOfDay;
     return timeReturn;
 }
 
